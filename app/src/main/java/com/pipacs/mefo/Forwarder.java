@@ -45,8 +45,6 @@ public class Forwarder extends Service {
                 body = "(no text)";
             }
             Log.i(TAG, "onStartCommand: From: " + phoneNumber + "; Message: " + body);
-            //Toast toast = Toast.makeText(context, "Sender: " + phoneNumber + ", Message: " + body, Toast.LENGTH_LONG);
-            //toast.show();
             String forwardedMessage = ">> From " + phoneNumber + "\n" + body;
             ArrayList<String> forwardedParts = smsManager.divideMessage(forwardedMessage);
             try {
