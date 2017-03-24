@@ -30,12 +30,13 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+
         <service
             android:enabled="true"
             android:exported="true"
             android:name=".Forwarder"
+            android:permission="android.permission.SEND_SMS"
             >
         </service>
-
     </application>
 </manifest>

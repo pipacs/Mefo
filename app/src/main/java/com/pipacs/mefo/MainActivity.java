@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatPreferenceActivity {
     static final String TAG = "MainActivity";
     public static final String SETTINGS_KEY_DESTINATION = "destination";
     public static final String SETTINGS_KEY_ENABLE_FORWARDING = "enable_forwarding";
-    static final int MY_PERMISSIONS_REQUEST_READ_SMS = 0;
+    static final int MY_PERMISSIONS_REQUEST_READ_SEND_SMS = 0;
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -75,45 +75,34 @@ public class MainActivity extends AppCompatPreferenceActivity {
         setupActionBar();
         getFragmentManager().beginTransaction().replace(android.R.id.content, new GeneralPreferenceFragment()).commit();
 
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS}, MY_PERMISSIONS_REQUEST_READ_SMS);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
+        if (!hasPermission(Manifest.permission.READ_SMS) || !hasPermission(Manifest.permission.SEND_SMS)) {
+            Log.i(TAG, "onCreate: No permission to read or send SMS");
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS},
+                    MY_PERMISSIONS_REQUEST_READ_SEND_SMS);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_SMS:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.i(TAG, "onRequestPermissionsResult: Permission to read SMS granted");
-                } else {
-                    Log.i(TAG, "onRequestPermissionsResult: Permission to read SMS denied");
-                }
+        if (requestCode == MY_PERMISSIONS_REQUEST_READ_SEND_SMS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "onRequestPermissionsResult: Permission to read SMS granted");
+            } else {
+                Log.i(TAG, "onRequestPermissionsResult: Permission to read SMS denied");
+            }
+            if (grantResults.length > 1 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                Log.i(TAG, "onRequestPermissionsResult: Permission to send SMS granted");
+            } else {
+                Log.i(TAG, "onRequestPermissionsResult: Permission to send SMS denied");
             }
         }
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
+    private boolean hasPermission(String permission) {
+        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -128,21 +117,13 @@ public class MainActivity extends AppCompatPreferenceActivity {
 
     /**
      * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
      */
     protected boolean isValidFragment(String fragmentName) {
-        boolean result = PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName);
-        Log.i(TAG, "isValidFragment? " + (result ? "Yes" : "No"));
-        return result;
+        return PreferenceFragment.class.getName().equals(fragmentName) || GeneralPreferenceFragment.class.getName().equals(fragmentName);
     }
 
-    /**
-     * This fragment shows general preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public class GeneralPreferenceFragment extends PreferenceFragment {
+    public static class GeneralPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
