@@ -2,7 +2,9 @@ package com.pipacs.mefo;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.Telephony;
 import android.support.annotation.Nullable;
 import android.telephony.SmsManager;
@@ -35,7 +37,8 @@ public class Forwarder extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand: " + intent.getAction());
-        String destination = ""; // FIXME: Get it from preferences
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        String destination = settings.getString("destination", "");
         SmsManager smsManager = SmsManager.getDefault();
         SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
         for (SmsMessage message: messages) {
@@ -44,11 +47,11 @@ public class Forwarder extends Service {
             if (body == null) {
                 body = "(no text)";
             }
-            Log.i(TAG, "onStartCommand: From: " + phoneNumber + "; Message: " + body);
+            Log.i(TAG, "onStartCommand: From: " + phoneNumber + "; To: " + destination + "; Message: " + body);
             String forwardedMessage = ">> From " + phoneNumber + "\n" + body;
             ArrayList<String> forwardedParts = smsManager.divideMessage(forwardedMessage);
             try {
-                smsManager.sendMultipartTextMessage(destination, phoneNumber, forwardedParts, null, null);
+                smsManager.sendMultipartTextMessage(destination, null, forwardedParts, null, null);
             } catch (Exception e) {
                 Log.e(TAG, "onStartCommand: " + e.toString());
             }
