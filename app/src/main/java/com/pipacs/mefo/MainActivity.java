@@ -15,6 +15,8 @@ import android.util.Log;
 
 public class MainActivity extends AppCompatPreferenceActivity {
     static final String TAG = "MainActivity";
+    public static final String SETTINGS_KEY_DESTINATION = "destination";
+    public static final String SETTINGS_KEY_ENABLE_FORWARDING = "enable_forwarding";
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -105,7 +107,7 @@ public class MainActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
-            bindPreferenceSummaryToValue(findPreference("destination"));
+            bindPreferenceSummaryToValue(findPreference(SETTINGS_KEY_DESTINATION));
         }
 
         @Override
