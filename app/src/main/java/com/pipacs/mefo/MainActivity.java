@@ -32,8 +32,8 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new GeneralPreferenceFragment()).commit();
-
+        getFragmentManager().beginTransaction().replace(android.R.id.content,
+                new GeneralPreferenceFragment()).commit();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
             Notification notification = new Notification.Builder(this)
                     .setContentTitle("Mefo")
                     .setContentText("SMS forwarding is enabled")
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.mipmap.ic_indicator)
                     .build();
             notificationManager.notify(MY_NOTIFICATION_ID, notification);
         } else {
