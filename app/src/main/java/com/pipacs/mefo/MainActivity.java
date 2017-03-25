@@ -15,12 +15,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.content.Intent;
 import android.app.PendingIntent;
 
 public class MainActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-    static final String TAG = "MainActivity";
     public static final String SETTINGS_KEY_DESTINATION = "destination";
     public static final String SETTINGS_KEY_ENABLE_FORWARDING = "enable_forwarding";
     static final int MY_PERMISSIONS_REQUEST_READ_SEND_SMS = 0;
@@ -30,7 +28,8 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
-        getFragmentManager().beginTransaction().replace(android.R.id.content,
+        getFragmentManager().beginTransaction().replace(
+                android.R.id.content,
                 new GeneralPreferenceFragment()).commit();
     }
 
@@ -42,7 +41,6 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
         if (!hasPermission(Manifest.permission.READ_SMS)
                 || !hasPermission(Manifest.permission.SEND_SMS)
                 || !hasPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)) {
-            Log.i(TAG, "onCreate: No permission to read or send SMS");
             ActivityCompat.requestPermissions(this,
                     new String[] {
                             Manifest.permission.SEND_SMS,
@@ -70,11 +68,7 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
         if (settings.getBoolean(MainActivity.SETTINGS_KEY_ENABLE_FORWARDING, true)) {
             Intent intent = new Intent(c, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(
-                    c,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivity(c, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             Notification notification = new Notification.Builder(c)
                     .setContentTitle("Mefo")
                     .setContentText("SMS forwarding is enabled")
@@ -101,8 +95,8 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
 
     /** This method stops fragment injection in malicious applications. */
     protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName) ||
-                GeneralPreferenceFragment.class.getName().equals(fragmentName);
+        return PreferenceFragment.class.getName().equals(fragmentName)
+                || GeneralPreferenceFragment.class.getName().equals(fragmentName);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -122,9 +116,8 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
             destinationPreference.setOnPreferenceChangeListener(destinationListener);
             destinationListener.onPreferenceChange(
                     destinationPreference,
-                    PreferenceManager
-                            .getDefaultSharedPreferences(destinationPreference.getContext())
-                            .getString(destinationPreference.getKey(), ""));
+                    PreferenceManager.getDefaultSharedPreferences(
+                            destinationPreference.getContext()).getString(destinationPreference.getKey(), ""));
         }
     }
 }
