@@ -23,18 +23,6 @@ public class Forwarder extends Service {
     }
 
     @Override
-    public void onCreate() {
-        Log.i(TAG, "onCreate");
-        super.onCreate();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG, "onDestroy");
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand: " + intent.getAction());
         if (!intent.getAction().equals(SMS_RECEIVED_ACTION)) {
