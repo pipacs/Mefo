@@ -5,21 +5,19 @@ import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.view.MenuItem;
 import android.util.Log;
+import android.content.Intent;
+import android.app.PendingIntent;
 
 public class MainActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     static final String TAG = "MainActivity";
@@ -40,11 +38,17 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
     protected void onResume() {
         super.onResume();
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
-        toggleIndicator();
-        if (!hasPermission(Manifest.permission.READ_SMS) || !hasPermission(Manifest.permission.SEND_SMS)) {
+        toggleIndicator(this);
+        if (!hasPermission(Manifest.permission.READ_SMS)
+                || !hasPermission(Manifest.permission.SEND_SMS)
+                || !hasPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)) {
             Log.i(TAG, "onCreate: No permission to read or send SMS");
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS},
+                    new String[] {
+                            Manifest.permission.SEND_SMS,
+                            Manifest.permission.READ_SMS,
+                            Manifest.permission.RECEIVE_BOOT_COMPLETED
+                    },
                     MY_PERMISSIONS_REQUEST_READ_SEND_SMS);
         }
     }
@@ -57,38 +61,30 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        toggleIndicator();
+        toggleIndicator(this);
     }
 
     /** Show/hide the status bar indicator. */
-    private void toggleIndicator() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+    public static void toggleIndicator(Context c) {
+        NotificationManager notificationManager = (NotificationManager)c.getSystemService(NOTIFICATION_SERVICE);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
         if (settings.getBoolean(MainActivity.SETTINGS_KEY_ENABLE_FORWARDING, true)) {
-            Notification notification = new Notification.Builder(this)
+            Intent intent = new Intent(c, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    c,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            Notification notification = new Notification.Builder(c)
                     .setContentTitle("Mefo")
                     .setContentText("SMS forwarding is enabled")
                     .setSmallIcon(R.mipmap.ic_indicator)
+                    .setOngoing(true)
+                    .setContentIntent(pendingIntent)
                     .build();
             notificationManager.notify(MY_NOTIFICATION_ID, notification);
         } else {
             notificationManager.cancel(MY_NOTIFICATION_ID);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == MY_PERMISSIONS_REQUEST_READ_SEND_SMS) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG, "onRequestPermissionsResult: Permission to read SMS granted");
-            } else {
-                Log.i(TAG, "onRequestPermissionsResult: Permission to read SMS denied");
-            }
-            if (grantResults.length > 1 && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                Log.i(TAG, "onRequestPermissionsResult: Permission to send SMS granted");
-            } else {
-                Log.i(TAG, "onRequestPermissionsResult: Permission to send SMS denied");
-            }
         }
     }
 
