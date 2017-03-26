@@ -21,7 +21,7 @@ import android.app.PendingIntent;
 public class MainActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String SETTINGS_KEY_DESTINATION = "destination";
     public static final String SETTINGS_KEY_ENABLE_FORWARDING = "enable_forwarding";
-    static final int MY_PERMISSIONS_REQUEST_READ_SEND_SMS = 0;
+    static final int MY_PERMISSION_REQUEST = 0;
     static final int MY_NOTIFICATION_ID = 65;
 
     @Override
@@ -40,14 +40,16 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
         toggleIndicator(this);
         if (!hasPermission(Manifest.permission.READ_SMS)
                 || !hasPermission(Manifest.permission.SEND_SMS)
-                || !hasPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)) {
+                || !hasPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)
+                || !hasPermission(Manifest.permission.RECEIVE_SMS)) {
             ActivityCompat.requestPermissions(this,
                     new String[] {
+                            Manifest.permission.RECEIVE_SMS,
                             Manifest.permission.SEND_SMS,
                             Manifest.permission.READ_SMS,
                             Manifest.permission.RECEIVE_BOOT_COMPLETED
                     },
-                    MY_PERMISSIONS_REQUEST_READ_SEND_SMS);
+                    MY_PERMISSION_REQUEST);
         }
     }
 
