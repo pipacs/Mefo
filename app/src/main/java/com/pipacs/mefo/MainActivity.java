@@ -41,13 +41,15 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
         if (!hasPermission(Manifest.permission.READ_SMS)
                 || !hasPermission(Manifest.permission.SEND_SMS)
                 || !hasPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)
-                || !hasPermission(Manifest.permission.RECEIVE_SMS)) {
+                || !hasPermission(Manifest.permission.RECEIVE_SMS)
+                || !hasPermission(Manifest.permission.WAKE_LOCK)) {
             ActivityCompat.requestPermissions(this,
                     new String[] {
                             Manifest.permission.RECEIVE_SMS,
                             Manifest.permission.SEND_SMS,
                             Manifest.permission.READ_SMS,
-                            Manifest.permission.RECEIVE_BOOT_COMPLETED
+                            Manifest.permission.RECEIVE_BOOT_COMPLETED,
+                            Manifest.permission.WAKE_LOCK
                     },
                     MY_PERMISSION_REQUEST);
         }
