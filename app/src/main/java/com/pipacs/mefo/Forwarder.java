@@ -42,7 +42,7 @@ public class Forwarder extends Service {
                 body = "(no text)";
             }
             Log.i(TAG, "onStartCommand: From: " + phoneNumber + "; To: " + destination + "; Message: " + body);
-            String forwardedMessage = ">> From " + phoneNumber + ":\n" + body;
+            String forwardedMessage = body + "\n>> From " + phoneNumber;
             ArrayList<String> forwardedParts = smsManager.divideMessage(forwardedMessage);
             try {
                 smsManager.sendMultipartTextMessage(destination, null, forwardedParts, null, null);
