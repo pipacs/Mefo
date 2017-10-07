@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "666602257648",
+    "firebase_url": "https://mefo-d5e3b.firebaseio.com",
+    "project_id": "mefo-d5e3b",
+    "storage_bucket": "mefo-d5e3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666602257648:android:b97c134e0ba3d096",
+        "android_client_info": {
+          "package_name": "com.pipacs.mefo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666602257648-v3vne37kn3s9nsfjfvka7iph2mk22k5c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pipacs.mefo",
+            "certificate_hash": "a68a7089721188bc83b558a7c24407bf28db54b9"
+          }
+        },
+        {
+          "client_id": "666602257648-prqdd94a120hvo1l95kjie78fd2lsqt1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyT72JZVfpe6HhTMs8KjHM4-wY6Wx7TQs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "666602257648-prqdd94a120hvo1l95kjie78fd2lsqt1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

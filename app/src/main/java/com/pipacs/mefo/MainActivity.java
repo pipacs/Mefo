@@ -17,6 +17,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.content.Intent;
 import android.app.PendingIntent;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String SETTINGS_KEY_DESTINATION = "destination";
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setupActionBar();
         getFragmentManager()
                 .beginTransaction()
