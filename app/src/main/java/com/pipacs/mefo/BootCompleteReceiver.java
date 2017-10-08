@@ -7,6 +7,6 @@ import android.content.Intent;
 public class BootCompleteReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        MainActivity.toggleIndicator(context);
+        MainActivity.updateIndicator(context);
     }
 }

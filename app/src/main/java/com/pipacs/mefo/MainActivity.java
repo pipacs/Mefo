@@ -20,7 +20,9 @@ import android.app.PendingIntent;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
-public class MainActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity
+        extends AppCompatPreferenceActivity
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String SETTINGS_KEY_DESTINATION = "destination";
     public static final String SETTINGS_KEY_ENABLE_FORWARDING = "enable_forwarding";
     static final int MY_PERMISSION_REQUEST = 0;
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
     protected void onResume() {
         super.onResume();
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
-        toggleIndicator(this);
+        updateIndicator(this);
         if (!hasPermission(Manifest.permission.READ_SMS)
                 || !hasPermission(Manifest.permission.SEND_SMS)
                 || !hasPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)
@@ -67,11 +69,11 @@ public class MainActivity extends AppCompatPreferenceActivity implements SharedP
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        toggleIndicator(this);
+        updateIndicator(this);
     }
 
     /** Show/hide the status bar indicator. */
-    public static void toggleIndicator(Context c) {
+    public static void updateIndicator(Context c) {
         NotificationManager notificationManager = (NotificationManager)c.getSystemService(NOTIFICATION_SERVICE);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
         if (settings.getBoolean(MainActivity.SETTINGS_KEY_ENABLE_FORWARDING, true)) {

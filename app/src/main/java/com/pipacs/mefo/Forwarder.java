@@ -26,17 +26,20 @@ public class Forwarder extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand: " + intent.getAction());
         if (!intent.getAction().equals(SMS_RECEIVED_ACTION)) {
-            return START_NOT_STICKY;
+            return START_STICKY;
         }
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         if (!settings.getBoolean(MainActivity.SETTINGS_KEY_ENABLE_FORWARDING, true)) {
-            return START_NOT_STICKY;
+            return START_STICKY;
         }
         String destination = settings.getString(MainActivity.SETTINGS_KEY_DESTINATION, "");
         SmsManager smsManager = SmsManager.getDefault();
         SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
         for (SmsMessage message: messages) {
-            String phoneNumber = message.getOriginatingAddress();
+            String phoneNumber = message.getDisplayOriginatingAddress();
+            if (phoneNumber == null) {
+                phoneNumber = "(unknown)";
+            }
             String body = message.getDisplayMessageBody();
             if (body == null) {
                 body = "(no text)";
@@ -50,6 +53,6 @@ public class Forwarder extends Service {
                 Log.e(TAG, "onStartCommand: " + e.toString());
             }
         }
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 }
