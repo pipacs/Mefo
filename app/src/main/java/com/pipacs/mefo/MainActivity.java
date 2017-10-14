@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -17,8 +18,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.content.Intent;
 import android.app.PendingIntent;
-import com.crashlytics.android.Crashlytics;
-import io.fabric.sdk.android.Fabric;
+import android.util.Log;
 
 public class MainActivity
         extends AppCompatPreferenceActivity
@@ -27,11 +27,11 @@ public class MainActivity
     public static final String SETTINGS_KEY_ENABLE_FORWARDING = "enable_forwarding";
     static final int MY_PERMISSION_REQUEST = 0;
     static final int MY_NOTIFICATION_ID = 65;
+    private final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
         setupActionBar();
         getFragmentManager()
                 .beginTransaction()
@@ -49,6 +49,7 @@ public class MainActivity
                 || !hasPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED)
                 || !hasPermission(Manifest.permission.RECEIVE_SMS)
                 || !hasPermission(Manifest.permission.WAKE_LOCK)) {
+            Log.d(TAG, "onResume: Requesting permissions");
             ActivityCompat.requestPermissions(this,
                     new String[] {
                             Manifest.permission.RECEIVE_SMS,
@@ -59,6 +60,9 @@ public class MainActivity
                     },
                     MY_PERMISSION_REQUEST);
         }
+        Context context = getApplicationContext();
+        Intent serviceIntent = new Intent(context, SmsForwarder.class);
+        context.startService(serviceIntent);
     }
 
     @Override
@@ -70,6 +74,13 @@ public class MainActivity
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         updateIndicator(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        for (int i = 0; i < permissions.length; i++) {
+            Log.d(TAG, "onRequestPermissionsResult " + permissions[i] + ": " + String.valueOf(grantResults[i]));
+        }
     }
 
     /** Show/hide the status bar indicator. */

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.pipacs.mefo">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pipacs.mefo">
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -23,37 +23,21 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="047769e67fd3ba4c46203925876140812eb5d7b2"
-            />
-
-        <receiver
-            android:name=".SmsReceiver"
-            android:exported="true"
-            android:enabled="true"
-            >
-            <intent-filter android:priority="2147483647">
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+        <service android:enabled="true" android:name=".SmsForwarder">
+            <intent-filter android:priority="999">
+                <action android:name=".SmsForwarder" />
             </intent-filter>
-        </receiver>
+        </service>
 
         <receiver
             android:name=".BootCompleteReceiver"
             android:enabled="true"
             android:exported="false"
             >
-            <intent-filter>
+            <intent-filter android:priority="999">
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <service
-            android:enabled="true"
-            android:exported="true"
-            android:name=".Forwarder"
-            android:permission="android.permission.SEND_SMS"
-            >
-        </service>
     </application>
 </manifest>
